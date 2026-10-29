@@ -1,0 +1,1198 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="color-scheme" content="dark">
+<title>Local Legend · Backoffice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #15162b; --plate: #2b2d42; --plate-dark: #1c1d2e; --edge: rgba(244,241,222,.22);
+  --text: #f4f1de; --dim: rgba(244,241,222,.65); --cyan: #00f5d4; --gold: #ffd166; --red: #ff6b6b; --green: #5be37d;
+  --font: "Unbounded", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--text); font-family: var(--font); font-size: 14px; }
+body { min-height: 100vh; }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--cyan); }
+.hidden { display: none !important; }
+header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 20px; background: var(--plate-dark); border-bottom: 2px solid var(--edge); position: sticky; top: 0; z-index: 5; }
+header h1 { margin: 0; font-size: 16px; font-weight: 800; letter-spacing: .02em; }
+header h1 span { color: var(--gold); }
+header .who { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--dim); }
+main { padding: 20px; max-width: 1500px; margin: 0 auto; }
+.btn { background: var(--plate); border: 2px solid var(--edge); border-radius: 12px; padding: 9px 14px; cursor: pointer; font-weight: 700; font-size: 13px; }
+.btn:hover { border-color: var(--text); }
+.btn.cta { background: var(--gold); color: #2b2b42; border-color: #fff; }
+.btn.small { padding: 6px 10px; font-size: 12px; }
+.btn[disabled] { opacity: .5; cursor: default; }
+.card { background: var(--plate); border: 2px solid var(--edge); border-radius: 18px; padding: 18px; }
+.login { max-width: 460px; margin: 12vh auto 0; text-align: center; }
+.login h2 { margin: 0 0 6px; font-size: 22px; color: var(--gold); }
+.login p { color: var(--dim); margin: 0 0 16px; line-height: 1.5; }
+.login input { width: 100%; background: var(--plate-dark); border: 2px solid var(--edge); border-radius: 12px; padding: 14px; font-weight: 700; font-size: 16px; margin-bottom: 12px; text-align: center; }
+.login input:focus, .filters input:focus, .filters select:focus, textarea:focus, .tag-input:focus { outline: none; border-color: var(--cyan); }
+.msg { min-height: 20px; margin: 4px 0 10px; font-size: 13px; font-weight: 700; color: var(--red); }
+.msg.ok { color: var(--dim); }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 14px; }
+.kpi { background: var(--plate); border: 2px solid var(--edge); border-radius: 16px; padding: 14px; }
+.kpi .v { font-size: 26px; font-weight: 800; }
+.kpi .l { font-size: 10px; letter-spacing: .08em; color: var(--cyan); font-weight: 700; margin-top: 4px; }
+.kpi .s { font-size: 11px; color: var(--dim); margin-top: 2px; }
+.chart { margin-bottom: 14px; }
+.chart .t { font-size: 10px; letter-spacing: .08em; color: var(--cyan); font-weight: 700; margin-bottom: 8px; }
+.chart { position: relative; }
+.chart svg { width: 100%; height: 170px; display: block; }
+.chart .tip { position: absolute; pointer-events: none; background: var(--plate-dark); border: 2px solid var(--cyan); border-radius: 10px; padding: 6px 10px; font-size: 12px; font-weight: 700; white-space: nowrap; z-index: 3; transform: translate(-50%, -100%); }
+.chart .tip small { display: block; color: var(--dim); font-weight: 500; font-size: 11px; }
+.filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+.filters input, .filters select { background: var(--plate-dark); border: 2px solid var(--edge); border-radius: 12px; padding: 9px 12px; font-size: 13px; }
+.filters input[type=search] { flex: 1 1 260px; min-width: 200px; }
+.filters .grow { flex: 1; }
+.filters label { font-size: 12px; color: var(--dim); display: inline-flex; gap: 6px; align-items: center; }
+.tablewrap { overflow-x: auto; border: 2px solid var(--edge); border-radius: 16px; background: var(--plate); }
+table { border-collapse: collapse; width: 100%; min-width: 1100px; }
+th { text-align: left; font-size: 10px; letter-spacing: .08em; color: var(--cyan); padding: 10px 12px; border-bottom: 2px solid var(--edge); white-space: nowrap; }
+td { padding: 9px 12px; border-bottom: 1px solid rgba(244,241,222,.08); white-space: nowrap; vertical-align: middle; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: rgba(244,241,222,.06); }
+td.mono { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; }
+.pill { display: inline-block; border-radius: 999px; padding: 2px 9px; font-size: 11px; font-weight: 700; border: 1.5px solid var(--edge); margin-right: 4px; }
+.pill.yes { color: var(--green); border-color: var(--green); }
+.pill.tag { color: var(--gold); border-color: rgba(255,209,102,.6); }
+.dim { color: var(--dim); }
+.pager { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 2px; color: var(--dim); font-size: 12px; }
+.drawer-back { position: fixed; inset: 0; background: rgba(5,5,15,.6); z-index: 20; }
+.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100vw); background: var(--plate); border-left: 2px solid var(--edge); z-index: 21; overflow-y: auto; padding: 20px; }
+.drawer h2 { margin: 0 0 4px; font-size: 22px; color: var(--gold); word-break: break-word; }
+.drawer .sub { color: var(--dim); font-size: 12px; margin-bottom: 14px; }
+.sec { margin: 16px 0; }
+.sec h3 { margin: 0 0 8px; font-size: 10px; letter-spacing: .08em; color: var(--cyan); }
+.kv { display: grid; grid-template-columns: 150px 1fr; gap: 6px 12px; font-size: 13px; }
+.kv .k { color: var(--dim); }
+.kv .vv { word-break: break-word; }
+.rec { display: grid; grid-template-columns: 1fr auto auto; gap: 4px 12px; font-size: 12px; }
+textarea { width: 100%; min-height: 110px; background: var(--plate-dark); border: 2px solid var(--edge); border-radius: 12px; padding: 10px; resize: vertical; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chip { display: inline-flex; align-items: center; gap: 6px; background: var(--plate-dark); border: 1.5px solid rgba(255,209,102,.6); color: var(--gold); border-radius: 999px; padding: 3px 4px 3px 10px; font-size: 12px; font-weight: 700; }
+.chip button { background: none; border: 0; cursor: pointer; color: var(--gold); font-weight: 800; padding: 0 6px; }
+.tag-input { background: var(--plate-dark); border: 2px solid var(--edge); border-radius: 999px; padding: 5px 12px; font-size: 12px; width: 150px; }
+.close { position: absolute; top: 14px; right: 16px; }
+nav.tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+nav.tabs button { background: var(--plate-dark); border: 2px solid var(--edge); border-radius: 12px; padding: 9px 16px; cursor: pointer; font-weight: 700; font-size: 13px; }
+nav.tabs button.on { background: var(--plate); border-color: var(--cyan); color: var(--cyan); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-bottom: 14px; }
+.card h3 { margin: 0 0 10px; font-size: 10px; letter-spacing: .08em; color: var(--cyan); }
+.bars .row { display: grid; grid-template-columns: minmax(70px, 40%) 1fr auto; gap: 8px; align-items: center; margin: 5px 0; font-size: 12px; }
+.bars .row .name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bars .row .track { height: 10px; background: rgba(244,241,222,.12); border-radius: 5px; overflow: hidden; }
+.bars .row .fill { height: 100%; background: var(--cyan); border-radius: 5px; }
+.bars .row b { font-variant-numeric: tabular-nums; }
+.periods { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+.periods button.on { border-color: var(--cyan); color: var(--cyan); }
+.note { font-size: 12px; color: var(--dim); line-height: 1.5; margin: 6px 0 14px; }
+.evt { display: grid; grid-template-columns: 62px 1fr; gap: 4px 10px; font-size: 12px; }
+.evt .t { color: var(--dim); font-variant-numeric: tabular-nums; }
+.evt code { font-family: ui-monospace, Menlo, monospace; color: var(--gold); font-size: 11px; word-break: break-all; }
+canvas.replay { width: 100%; background: var(--plate-dark); border: 2px solid var(--edge); border-radius: 14px; display: block; }
+nav.tabs .badge { display: inline-block; min-width: 18px; padding: 0 5px; margin-left: 6px; border-radius: 9px; background: var(--red); color: #fff; font-size: 11px; line-height: 18px; text-align: center; }
+.pill.red { color: var(--red); border-color: var(--red); }
+.pill.gold { color: var(--gold); border-color: var(--gold); }
+.pill.cyan { color: var(--cyan); border-color: var(--cyan); }
+.pill.grey { color: var(--dim); }
+.btn.danger { border-color: rgba(255,107,107,.7); color: var(--red); }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 12px; }
+.toolbar .grow { flex: 1; }
+.field { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.field > span { font-size: 10px; letter-spacing: .08em; color: var(--cyan); font-weight: 700; text-transform: uppercase; }
+.field input, .field select, .field textarea { background: var(--plate-dark); border: 2px solid var(--edge); border-radius: 12px; padding: 9px 12px; font-size: 13px; width: 100%; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--cyan); }
+.field small { color: var(--dim); font-size: 11px; line-height: 1.4; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.composer { display: grid; grid-template-columns: minmax(300px, 440px) 1fr; gap: 20px; align-items: start; }
+.composer iframe { position: sticky; top: 12px; width: 100%; height: 640px; border: 2px solid var(--edge); border-radius: 14px; background: #15162b; }
+.box { background: var(--plate-dark); border: 2px solid var(--edge); border-radius: 14px; padding: 12px 14px; font-size: 13px; line-height: 1.5; margin-bottom: 12px; }
+.box.warn { border-color: rgba(255,209,102,.6); }
+.pop { position: absolute; z-index: 15; background: var(--plate); border: 2px solid var(--cyan); border-radius: 14px; padding: 10px; max-height: 320px; overflow-y: auto; min-width: 230px; box-shadow: 0 10px 30px rgba(0,0,0,.4); }
+.pop label { display: flex; gap: 8px; align-items: center; padding: 4px 6px; font-size: 13px; cursor: pointer; color: var(--text); }
+.shot { max-width: 100%; border: 2px solid var(--edge); border-radius: 12px; cursor: zoom-in; display: block; }
+.msgbox { padding: 8px 12px; border-radius: 12px; font-size: 13px; margin: 8px 0; }
+.msgbox.ok { background: rgba(91,227,125,.12); border: 1.5px solid var(--green); }
+.msgbox.err { background: rgba(255,107,107,.12); border: 1.5px solid var(--red); }
+@media (max-width: 900px) { .composer { grid-template-columns: 1fr; } .two { grid-template-columns: 1fr; } }
+@media (max-width: 700px) { main { padding: 12px; } header { padding: 10px 12px; } .kv { grid-template-columns: 110px 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>LOCAL <span>LEGEND</span> · BACKOFFICE</h1>
+  <div class="who hidden" id="who"><span id="who-email"></span><button class="btn small" id="logout">Se déconnecter</button></div>
+</header>
+<main>
+  <section id="login" class="login card">
+    <h2 id="login-title">Connexion</h2>
+    <p id="login-help">Accès réservé. Entre ton adresse e-mail : on t'envoie un code à 6 chiffres.</p>
+    <input id="login-email" type="email" autocomplete="email" placeholder="toi@exemple.com" inputmode="email">
+    <input id="login-code" type="text" autocomplete="one-time-code" inputmode="numeric" maxlength="8" placeholder="Code reçu par mail" class="hidden">
+    <div id="login-msg" class="msg"></div>
+    <button class="btn cta" id="login-go" style="width:100%;padding:13px">ENVOYER LE CODE</button>
+    <p style="margin-top:14px"><a href="#" id="login-back" class="hidden">Changer d'adresse</a></p>
+  </section>
+
+  <section id="app" class="hidden">
+    <nav class="tabs"><button id="tab-players" class="on">Joueurs</button><button id="tab-mail">Mail</button><button id="tab-tickets">Tickets<span class="badge hidden" id="tickets-badge"></span></button><button id="tab-analytics">Analyse</button></nav>
+    <div id="view-players">
+    <div class="kpis" id="kpis"></div>
+    <div class="card chart"><div class="t">INSCRIPTIONS · 30 DERNIERS JOURS</div><svg id="chart"></svg><div class="tip hidden" id="chart-tip"></div></div>
+    <div class="filters">
+      <input type="search" id="f-search" placeholder="Rechercher : pseudo, nom, e-mail, Instagram, TikTok">
+      <select id="f-optin"><option value="all">Opt-in : tous</option><option value="yes">Opt-in : oui</option><option value="no">Opt-in : non</option></select>
+      <select id="f-secured"><option value="all">Comptes : tous</option><option value="yes">Compte sécurisé (e-mail)</option><option value="no">Non sécurisé</option></select>
+      <button class="btn" id="f-city-btn" style="padding:9px 12px;font-weight:500">Ville : toutes</button>
+      <select id="f-tag"><option value="">Étiquette : toutes</option></select>
+      <select id="f-order">
+        <option value="created_desc">Plus récents</option><option value="created_asc">Plus anciens</option>
+        <option value="active_desc">Dernière activité</option><option value="medals_desc">Médailles</option><option value="name_asc">Nom (A→Z)</option>
+      </select>
+      <button class="btn" id="f-more" style="padding:9px 12px;font-weight:500">Plus de filtres ▾</button>
+      <span class="grow"></span>
+      <label><input type="checkbox" id="x-optin" checked> opt-in seulement</label>
+      <button class="btn" id="export">Exporter en CSV</button>
+    </div>
+    <div class="filters hidden" id="f-adv">
+      <label>Activité <select id="a-active"><option value="">indifférente</option><option value="active:7">active ces 7 jours</option><option value="active:30">active ces 30 jours</option><option value="inactive:30">inactive depuis 30 jours</option><option value="inactive:90">inactive depuis 90 jours</option></select></label>
+      <label>Médailles <input type="number" id="a-medals-min" min="0" max="999" placeholder="min" style="width:80px"> à <input type="number" id="a-medals-max" min="0" max="999" placeholder="max" style="width:80px"></label>
+      <label>Voiture <select id="a-car"><option value="">toutes</option></select></label>
+      <label>Inscrit du <input type="date" id="a-after"> au <input type="date" id="a-before"></label>
+      <label>Appareil <select id="a-device"><option value="">tous</option><option value="mobile">mobile</option><option value="ordinateur">ordinateur</option><option value="tablette">tablette</option></select></label>
+      <label><input type="checkbox" id="a-legend"> Local Legend d'un circuit</label>
+      <label><input type="checkbox" id="a-insta"> Instagram renseigné</label>
+      <label><input type="checkbox" id="a-tiktok"> TikTok renseigné</label>
+    </div>
+    <div class="filters" id="f-lists">
+      <span class="dim" style="font-size:12px">Listes :</span>
+      <select id="f-list"><option value="">Aucune liste (filtres libres)</option></select>
+      <button class="btn small" id="list-save">Enregistrer ces filtres comme liste</button>
+      <button class="btn small hidden" id="list-update">Mettre à jour la liste</button>
+      <button class="btn small danger hidden" id="list-delete">Supprimer la liste</button>
+      <span class="dim" id="list-msg" style="font-size:12px"></span>
+    </div>
+    <div class="tablewrap"><table>
+      <thead><tr><th>PSEUDO</th><th>NOM</th><th>E-MAIL</th><th>INSTAGRAM</th><th>TIKTOK</th><th>OPT-IN</th><th>VILLE</th><th>MÉDAILLES</th><th>INSCRIT LE</th><th>ACTIVITÉ</th><th>ÉTIQUETTES</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table></div>
+    <div class="pager"><span id="count"></span><span><button class="btn small" id="prev">← Précédent</button> <button class="btn small" id="next">Suivant →</button></span></div>
+    </div>
+
+    <div id="view-mail" class="hidden">
+      <div id="mail-compose" class="hidden"></div>
+      <div id="mail-list">
+      <div class="toolbar"><button class="btn cta" id="mail-new">Nouvel envoi</button><span class="grow"></span><span class="dim" id="mail-note" style="font-size:12px"></span></div>
+      <div class="tablewrap"><table style="min-width:900px"><thead><tr><th>DATE</th><th>OBJET</th><th>LISTE</th><th>MODÈLE</th><th>STATUT</th><th>ENVOYÉS</th><th>LIVRÉS</th><th>REBONDS</th><th>ERREURS</th><th>ÉCARTÉS</th></tr></thead><tbody id="mail-rows"></tbody></table></div>
+      <div class="pager"><span id="mail-count"></span><span><button class="btn small" id="mail-prev">← Précédent</button> <button class="btn small" id="mail-next">Suivant →</button></span></div>
+      </div>
+    </div>
+
+    <div id="view-tickets" class="hidden">
+      <div class="filters">
+        <input type="search" id="t-search" placeholder="Rechercher : message, pseudo, e-mail">
+        <select id="t-status"><option value="all">Statut : tous</option><option value="new">Nouveau</option><option value="in_progress">En cours</option><option value="resolved">Résolu</option><option value="rejected">Rejeté</option></select>
+        <select id="t-kind"><option value="all">Type : tous</option><option value="bug">Bug</option><option value="suggestion">Suggestion</option></select>
+      </div>
+      <div class="tablewrap"><table style="min-width:980px"><thead><tr><th>DATE</th><th>TYPE</th><th>STATUT</th><th>JOUEUR</th><th>VILLE</th><th>MESSAGE</th><th>JOINT</th><th>RÉPONSES</th></tr></thead><tbody id="t-rows"></tbody></table></div>
+      <div class="pager"><span id="t-count"></span><span><button class="btn small" id="t-prev">← Précédent</button> <button class="btn small" id="t-next">Suivant →</button></span></div>
+    </div>
+
+    <div id="view-analytics" class="hidden">
+      <div class="periods"><span class="dim">Période :</span>
+        <button class="btn small" data-days="7">7 jours</button><button class="btn small on" data-days="30">30 jours</button><button class="btn small" data-days="90">90 jours</button></div>
+      <div class="note" id="an-consent-note"></div>
+      <div class="kpis" id="an-kpis"></div>
+      <div class="card chart"><div class="t">SESSIONS PAR JOUR</div><svg id="chart-sessions"></svg><div class="tip hidden" id="tip-sessions"></div></div>
+      <div class="grid2">
+        <div class="card"><h3>DURÉE DES SESSIONS</h3><div class="bars" id="an-durations"></div></div>
+        <div class="card"><h3>PROVENANCE DES JOUEURS (PREMIER LANCEMENT)</h3><div class="bars" id="an-sources"></div></div>
+        <div class="card"><h3>APPAREILS</h3><div class="bars" id="an-devices"></div></div>
+        <div class="card"><h3>SYSTÈMES</h3><div class="bars" id="an-systems"></div></div>
+        <div class="card"><h3>NAVIGATEURS</h3><div class="bars" id="an-browsers"></div></div>
+        <div class="card"><h3>VERSIONS</h3><div class="bars" id="an-channels"></div></div>
+        <div class="card"><h3>PAYS</h3><div class="bars" id="an-countries"></div></div>
+        <div class="card"><h3>VILLES</h3><div class="bars" id="an-cities"></div></div>
+      </div>
+      <div class="card" style="margin-bottom:14px"><h3>PARTIES PAR CIRCUIT</h3>
+        <div class="tablewrap" style="border:0"><table style="min-width:640px"><thead><tr><th>CIRCUIT</th><th>PARTIES</th><th>JOUEURS</th><th>DISTANCE MOYENNE</th><th>MEILLEURE</th><th>ABANDONS</th><th>OR</th></tr></thead><tbody id="an-circuits"></tbody></table></div></div>
+      <div class="card"><h3>SESSIONS RÉCENTES</h3>
+        <p class="note">L'adresse IP n'est gardée que 5 jours : ensuite, seuls restent le pays et la ville, avec un résumé anonyme de la session. La ville est déduite de l'IP via un service de géolocalisation (ipwho.is).</p>
+        <div class="tablewrap" style="border:0"><table style="min-width:980px"><thead><tr><th>DATE</th><th>JOUEUR</th><th>DURÉE</th><th>IP</th><th>PAYS</th><th>VILLE</th><th>APPAREIL</th><th>SOURCE</th><th>ÉVÉN.</th><th>PARTIES</th></tr></thead><tbody id="an-sessions"></tbody></table></div>
+        <div class="pager"><span id="an-count"></span><span><button class="btn small" id="an-prev">← Précédent</button> <button class="btn small" id="an-next">Suivant →</button></span></div></div>
+    </div>
+  </section>
+</main>
+<div id="drawer-root"></div>
+
+<script>
+"use strict";
+const SB_URL = "https://mermcdyufxvvgtuzplab.supabase.co";
+const SB_KEY = "sb_publishable_xpZAOmyu8zQenjVlr-9VYA_OE2zvnMM"; // clé publique (la même que dans le jeu) : l'accès est contrôlé côté serveur par is_admin()
+const PAGE = 50;
+const $ = (id) => document.getElementById(id);
+
+// ---------- petit utilitaire de construction du DOM : tout texte passe par textContent (les données viennent des joueurs) ----------
+function h(tag, attrs, ...kids) {
+  const el = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k === "class") el.className = v;
+    else if (k.startsWith("on")) el.addEventListener(k.slice(2), v);
+    else el.setAttribute(k, v === true ? "" : v);
+  }
+  for (const kid of kids.flat(Infinity)) {
+    if (kid === null || kid === undefined || kid === false) continue;
+    el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+  }
+  return el;
+}
+const fmtDate = (s) => s ? new Date(s).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }) : "—";
+const fmtDateTime = (s) => s ? new Date(s).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—";
+const HANDLE = /^[A-Za-z0-9._]+$/;
+const handleLink = (value, base, prefix) => !value ? h("span", { class: "dim" }, "—") : (HANDLE.test(value)
+  ? h("a", { href: base + value, target: "_blank", rel: "noopener noreferrer", onclick: (e) => e.stopPropagation() }, prefix + value) : h("span", {}, prefix + value));
+
+// ---------- session ----------
+const session = {
+  get() { try { return JSON.parse(localStorage.getItem("ll_admin_session") || "null"); } catch (e) { return null; } },
+  set(s) { try { localStorage.setItem("ll_admin_session", JSON.stringify(s)); } catch (e) {} },
+  clear() { try { localStorage.removeItem("ll_admin_session"); } catch (e) {} },
+};
+async function raw(path, method, body, token) {
+  const headers = { apikey: SB_KEY, "Content-Type": "application/json" };
+  if (token) headers.Authorization = "Bearer " + token;
+  const res = await fetch(SB_URL + path, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  return { ok: res.ok, status: res.status, data };
+}
+async function token() {
+  let s = session.get();
+  if (!s) throw new Error("no_session");
+  if (s.expires_at * 1000 - Date.now() < 60000) {
+    const r = await raw("/auth/v1/token?grant_type=refresh_token", "POST", { refresh_token: s.refresh_token });
+    if (!r.ok || !r.data || !r.data.access_token) { session.clear(); throw new Error("no_session"); }
+    s = keep(r.data);
+  }
+  return s.access_token;
+}
+function keep(d) {
+  const s = { access_token: d.access_token, refresh_token: d.refresh_token, expires_at: d.expires_at || Math.floor(Date.now() / 1000) + (d.expires_in || 3600), email: (d.user && d.user.email) || (session.get() || {}).email || "" };
+  session.set(s);
+  return s;
+}
+async function rpc(name, args) {
+  const r = await raw("/rest/v1/rpc/" + name, "POST", args || {}, await token());
+  if (!r.ok) {
+    const message = (r.data && (r.data.message || r.data.msg)) || ("http_" + r.status);
+    const error = new Error(message);
+    error.forbidden = message === "forbidden" || r.status === 401;
+    throw error;
+  }
+  return r.data;
+}
+
+// ---------- connexion par code e-mail ----------
+let loginEmail = "";
+const loginMsg = (text, ok) => { $("login-msg").textContent = text; $("login-msg").className = "msg" + (ok ? " ok" : ""); };
+function loginStep(step) {
+  const code = step === "code";
+  $("login-email").classList.toggle("hidden", code);
+  $("login-code").classList.toggle("hidden", !code);
+  $("login-back").classList.toggle("hidden", !code);
+  $("login-go").textContent = code ? "SE CONNECTER" : "ENVOYER LE CODE";
+  $("login-help").textContent = code ? "Code envoyé à " + loginEmail + ". Il peut mettre une minute à arriver (regarde aussi les indésirables)." : "Accès réservé. Entre ton adresse e-mail : on t'envoie un code à 6 chiffres.";
+  loginMsg("");
+  (code ? $("login-code") : $("login-email")).focus();
+}
+async function loginGo() {
+  const button = $("login-go");
+  button.disabled = true;
+  try {
+    if ($("login-code").classList.contains("hidden")) {
+      loginEmail = $("login-email").value.trim().toLowerCase();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(loginEmail)) { loginMsg("Cette adresse n'a pas l'air valide"); return; }
+      loginMsg("Un instant…", true);
+      const r = await raw("/auth/v1/otp", "POST", { email: loginEmail, create_user: true });
+      if (!r.ok) { loginMsg("Envoi impossible : " + ((r.data && (r.data.msg || r.data.message)) || r.status)); return; }
+      loginStep("code");
+    } else {
+      const code = $("login-code").value.trim();
+      if (code.length < 6) { loginMsg("Entre le code reçu par mail"); return; }
+      loginMsg("Vérification…", true);
+      const r = await raw("/auth/v1/verify", "POST", { type: "email", email: loginEmail, token: code });
+      if (!r.ok || !r.data || !r.data.access_token) { loginMsg("Code incorrect ou expiré"); return; }
+      keep(r.data);
+      await start();
+    }
+  } finally { button.disabled = false; }
+}
+
+// ---------- application ----------
+const state = { search: "", optin: "all", secured: "all", tag: "", cities: [], order: "created_desc", page: 0, total: 0, listId: "",
+  adv: { active: "", medals_min: "", medals_max: "", car: "", legend: false, created_after: "", created_before: "", has_instagram: false, has_tiktok: false, device: "" } };
+let searchTimer = null;
+
+async function start() {
+  const s = session.get();
+  if (!s) { showLogin(); return; }
+  try {
+    const admin = await rpc("is_admin");
+    if (admin !== true) throw Object.assign(new Error("forbidden"), { forbidden: true });
+  } catch (e) {
+    if (e.forbidden) { session.clear(); showLogin(); loginMsg("Cette adresse n'a pas accès au backoffice."); return; }
+    showLogin(); loginMsg("Connexion au serveur impossible : " + e.message); return;
+  }
+  $("login").classList.add("hidden");
+  $("app").classList.remove("hidden");
+  $("who").classList.remove("hidden");
+  $("who-email").textContent = s.email || "";
+  buildCarOptions();
+  await Promise.all([loadKpis(), loadTags(), loadCities(), loadRows(), loadSegments(), refreshTicketBadge()]);
+}
+function showLogin() {
+  $("login").classList.remove("hidden");
+  $("app").classList.add("hidden");
+  $("who").classList.add("hidden");
+  loginStep("email");
+}
+function logout() { session.clear(); showLogin(); }
+
+async function loadKpis() {
+  const k = await rpc("admin_kpis");
+  const pct = (n, d) => d ? Math.round(100 * n / d) + " %" : "—";
+  const tile = (value, label, sub) => h("div", { class: "kpi" }, h("div", { class: "v" }, value), h("div", { class: "l" }, label), sub ? h("div", { class: "s" }, sub) : null);
+  $("kpis").replaceChildren(
+    tile(k.players, "JOUEURS", "+" + k.new_7d + " en 7 jours · +" + k.new_30d + " en 30 jours"),
+    tile(k.optin, "OPT-IN", pct(k.optin, k.players) + " des joueurs"),
+    tile(k.secured, "COMPTES SÉCURISÉS", pct(k.secured, k.players) + " (e-mail connu)"),
+    tile(k.active_7d, "ACTIFS · 7 JOURS", pct(k.active_7d, k.players) + " des joueurs"),
+    tile(k.with_instagram, "INSTAGRAM", pct(k.with_instagram, k.players)),
+    tile(k.with_tiktok, "TIKTOK", pct(k.with_tiktok, k.players)));
+  chartDays = k.signups_by_day || [];
+  drawChart();
+}
+
+// ---------- graphiques en barres : echelle a gauche, reperes, nombre au survol ----------
+let chartDays = [];
+function niceScale(raw) { // pas "rond" (1, 2, 5, 10, 20, 25, 50...) pour 5 reperes au plus ; renvoie {step, max}
+  const need = Math.max(raw, 1);
+  for (let pow = 1; ; pow *= 10) {
+    for (const m of [1, 2, 2.5, 5]) {
+      const step = m * pow;
+      if (!Number.isInteger(step)) continue;
+      if (Math.ceil(need / step) <= 5) return { step, max: Math.ceil(need / step) * step };
+    }
+  }
+}
+function drawBars(svgId, tipId, series, one, many) { // series : [{day, n}]
+  const svg = $(svgId), tip = $(tipId);
+  if (!svg || !series.length) return;
+  const ns = "http://www.w3.org/2000/svg";
+  const W = Math.max(svg.clientWidth, 300), H = 170, left = 38, right = 8, top = 10, bottom = 24;
+  const plotW = W - left - right, plotH = H - top - bottom;
+  const scale = niceScale(Math.max(0, ...series.map((d) => d.n)));
+  const max = scale.max;
+  const el = (name, attrs, text) => { const e = document.createElementNS(ns, name); for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, String(v)); if (text !== undefined) e.textContent = text; return e; };
+  svg.replaceChildren();
+  svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+  const yOf = (n) => top + plotH - plotH * n / max;
+  for (let i = 0; i <= Math.round(max / scale.step); i++) {
+    const tk = i * scale.step;
+    svg.append(el("line", { x1: left, x2: W - right, y1: yOf(tk), y2: yOf(tk), stroke: "rgba(244,241,222,.14)", "stroke-width": 1 }));
+    svg.append(el("text", { x: left - 8, y: yOf(tk) + 4, "text-anchor": "end", fill: "rgba(244,241,222,.65)", "font-size": 11 }, tk));
+  }
+  const step = plotW / series.length;
+  const shortDate = (s) => new Date(s).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit" });
+  const every = series.length > 40 ? 10 : 5;
+  series.forEach((d, i) => {
+    const x = left + i * step;
+    const barH = d.n ? Math.max(3, plotH * d.n / max) : 0;
+    const bar = el("rect", { x: x + step * 0.15, y: top + plotH - barH, width: step * 0.7, height: barH, rx: 3, fill: "#00f5d4" });
+    if (d.n) svg.append(bar); else svg.append(el("rect", { x: x + step * 0.15, y: top + plotH - 1.5, width: step * 0.7, height: 1.5, fill: "rgba(244,241,222,.25)" }));
+    if (i % every === 0 || i === series.length - 1) svg.append(el("text", { x: x + step / 2, y: H - 6, "text-anchor": "middle", fill: "rgba(244,241,222,.55)", "font-size": 10 }, shortDate(d.day)));
+    const zone = el("rect", { x, y: top, width: step, height: plotH, fill: "transparent" }); // zone de survol : toute la colonne, meme pour une barre vide
+    zone.addEventListener("mouseenter", () => {
+      bar.setAttribute("fill", "#ffd166");
+      tip.replaceChildren(document.createTextNode(d.n + " " + (d.n > 1 ? many : one)), h("small", {}, new Date(d.day).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })));
+      tip.classList.remove("hidden");
+      const box = svg.getBoundingClientRect(), parent = svg.parentElement.getBoundingClientRect();
+      const half = tip.offsetWidth / 2;
+      tip.style.left = Math.min(Math.max(box.left - parent.left + x + step / 2, half + 4), parent.width - half - 4) + "px";
+      tip.style.top = (box.top - parent.top + yOf(d.n) - 6) + "px";
+    });
+    zone.addEventListener("mouseleave", () => { bar.setAttribute("fill", "#00f5d4"); tip.classList.add("hidden"); });
+    svg.append(zone);
+  });
+}
+let analyticsSeries = [];
+function drawChart() {
+  if (!$("view-players").classList.contains("hidden")) drawBars("chart", "chart-tip", chartDays, "inscription", "inscriptions");
+  if (!$("view-analytics").classList.contains("hidden")) drawBars("chart-sessions", "tip-sessions", analyticsSeries, "session", "sessions");
+}
+window.addEventListener("resize", () => drawChart());
+let allCities = [];
+async function loadCities() {
+  try { allCities = await rpc("admin_all_cities"); } catch (e) { allCities = []; } // avant la mise a jour du SQL, le filtre par ville reste simplement vide
+  updateCityButton();
+}
+function updateCityButton() {
+  $("f-city-btn").textContent = state.cities.length ? "Ville : " + (state.cities.length === 1 ? state.cities[0] : state.cities.length + " villes") : "Ville : toutes";
+}
+function closePop() { const old = document.getElementById("city-pop"); if (old) old.remove(); }
+function openCityPop(event) {
+  event.stopPropagation();
+  if (document.getElementById("city-pop")) { closePop(); return; }
+  const box = h("div", { class: "pop", id: "city-pop", onclick: (e) => e.stopPropagation() },
+    h("div", { style: "display:flex;justify-content:space-between;align-items:center;margin-bottom:6px" }, h("b", { style: "font-size:12px" }, "Villes"), h("button", { class: "btn small", onclick: () => { state.cities = []; updateCityButton(); closePop(); refilter(); } }, "Tout effacer")),
+    ...(allCities.length ? allCities.map((c) => h("label", {}, h("input", { type: "checkbox", checked: state.cities.includes(c.city), onchange: (e) => {
+      state.cities = e.target.checked ? [...state.cities, c.city] : state.cities.filter((x) => x !== c.city);
+      updateCityButton(); refilter();
+    } }), c.city + " (" + c.n + ")")) : [h("span", { class: "dim", style: "font-size:12px" }, "Aucune ville (SQL à jour ?)")]));
+  const r = $("f-city-btn").getBoundingClientRect();
+  box.style.left = (r.left + window.scrollX) + "px"; box.style.top = (r.bottom + window.scrollY + 4) + "px";
+  document.body.append(box);
+}
+// Le bouton d'export annonce combien de joueurs seront exportes avec les filtres actifs (opt-in seulement compris).
+async function refreshExportCount() {
+  try {
+    const rows = await rpc("admin_players", filtersArgs({ p_optin: $("x-optin").checked ? "yes" : state.optin, p_limit: 1, p_offset: 0 }));
+    const n = rows.length ? Number(rows[0].total) : 0;
+    $("export").textContent = "Exporter en CSV · " + n + " joueur" + (n > 1 ? "s" : "");
+  } catch (e) { $("export").textContent = "Exporter en CSV"; }
+}
+async function loadTags() {
+  const tags = await rpc("admin_all_tags");
+  const select = $("f-tag");
+  const current = state.tag;
+  select.replaceChildren(h("option", { value: "" }, "Étiquette : toutes"), ...tags.map((t) => h("option", { value: t.tag, selected: t.tag === current }, t.tag + " (" + t.n + ")")));
+  const list = $("tag-list") || h("datalist", { id: "tag-list" });
+  list.replaceChildren(...tags.map((t) => h("option", { value: t.tag })));
+  if (!list.parentNode) document.body.append(list);
+}
+// Jeu de filtres envoye au serveur (meme format que les listes enregistrees et les envois d'e-mails).
+function currentFilters() {
+  const f = {}, a = state.adv;
+  if (state.optin !== "all") f.optin = state.optin;
+  if (state.secured !== "all") f.secured = state.secured;
+  if (state.tag) f.tags = [state.tag];
+  if (state.cities.length) f.cities = state.cities;
+  if (a.active) { const [kind, days] = a.active.split(":"); f[kind === "active" ? "active_days" : "inactive_days"] = Number(days); }
+  if (a.medals_min !== "") f.medals_min = Number(a.medals_min);
+  if (a.medals_max !== "") f.medals_max = Number(a.medals_max);
+  if (a.car) f.car = a.car;
+  if (a.legend) f.legend = true;
+  if (a.created_after) f.created_after = a.created_after;
+  if (a.created_before) f.created_before = a.created_before;
+  if (a.has_instagram) f.has_instagram = true;
+  if (a.has_tiktok) f.has_tiktok = true;
+  if (a.device) f.device = a.device;
+  return f;
+}
+function filtersArgs(overrides) {
+  return Object.assign({ p_search: state.search, p_order: state.order, p_filters: currentFilters() }, overrides || {});
+}
+function readAdvanced() {
+  const a = state.adv;
+  a.active = $("a-active").value; a.medals_min = $("a-medals-min").value; a.medals_max = $("a-medals-max").value; a.car = $("a-car").value;
+  a.created_after = $("a-after").value; a.created_before = $("a-before").value; a.device = $("a-device").value;
+  a.legend = $("a-legend").checked; a.has_instagram = $("a-insta").checked; a.has_tiktok = $("a-tiktok").checked;
+}
+function writeControls() {
+  const a = state.adv;
+  $("f-optin").value = state.optin; $("f-secured").value = state.secured; $("f-tag").value = state.tag; updateCityButton();
+  $("a-active").value = a.active; $("a-medals-min").value = a.medals_min; $("a-medals-max").value = a.medals_max; $("a-car").value = a.car;
+  $("a-after").value = a.created_after; $("a-before").value = a.created_before; $("a-device").value = a.device;
+  $("a-legend").checked = a.legend; $("a-insta").checked = a.has_instagram; $("a-tiktok").checked = a.has_tiktok;
+}
+function applyFilters(f) {
+  state.optin = f.optin || "all"; state.secured = f.secured || "all"; state.tag = (f.tags && f.tags[0]) || ""; state.cities = f.cities || [];
+  state.adv = { active: f.active_days ? "active:" + f.active_days : f.inactive_days ? "inactive:" + f.inactive_days : "", medals_min: f.medals_min ?? "", medals_max: f.medals_max ?? "",
+    car: f.car || "", legend: !!f.legend, created_after: f.created_after || "", created_before: f.created_before || "", has_instagram: !!f.has_instagram, has_tiktok: !!f.has_tiktok, device: f.device || "" };
+  writeControls();
+}
+const CARS = [["city", "Citadine"], ["taxi", "Taximètre"], ["deuche", "Deuche"], ["jeep", "Baroudeur"], ["police", "Brigade"], ["truck", "Titan"], ["camper", "Escapade"], ["mini", "Bijou"], ["roadster", "Roadster"], ["buggy", "Salamandre"], ["bus", "Express"], ["muscle", "Tsunami"], ["hover", "Hoverix"], ["aurora", "Aurora"], ["bat", "Batmobyle"], ["unicorn", "Licorne"], ["mustang", "Mustangue"], ["bumble", "Bourdon-Bot"], ["rotor", "Rotor 7"], ["magnum", "Magnoum"], ["taxilion", "Taxi-Lion"], ["monster", "Monstre"], ["supercar", "Speedster"], ["hearse", "Corbillard"], ["delorean", "Dolorewhat"], ["formula", "Bolide"], ["ecto", "Ectoplasme"], ["agent", "Agent Secret"], ["falcon", "Faucon Furieux"], ["mach5", "Mach V"]];
+function buildCarOptions() { $("a-car").replaceChildren(h("option", { value: "" }, "toutes"), ...CARS.map(([id, name]) => h("option", { value: id }, name))); }
+
+// ---------- listes enregistrees (segments) ----------
+let segments = [];
+async function loadSegments() {
+  try { segments = await rpc("admin_segments"); } catch (e) { segments = []; $("list-msg").textContent = "Listes indisponibles : le SQL maj_mail_feedback.sql a-t-il été lancé ?"; }
+  renderSegmentSelect();
+}
+function renderSegmentSelect() {
+  $("f-list").replaceChildren(h("option", { value: "" }, "Aucune liste (filtres libres)"), ...segments.map((x) => h("option", { value: x.id, selected: x.id === state.listId }, x.name + " (" + x.members + " joueur" + (Number(x.members) > 1 ? "s" : "") + ")")));
+  $("list-update").classList.toggle("hidden", !state.listId);
+  $("list-delete").classList.toggle("hidden", !state.listId);
+}
+const listMsg = (text) => { $("list-msg").textContent = text; };
+async function saveList(asNew) {
+  let name = "";
+  const current = segments.find((x) => x.id === state.listId);
+  if (asNew || !current) {
+    name = (window.prompt("Nom de la liste (ex. « Clichy et Asnières, actifs ») :", "") || "").trim();
+    if (!name) return;
+  } else name = current.name;
+  try {
+    const id = await rpc("admin_save_segment", { p_id: asNew || !current ? null : current.id, p_name: name, p_filters: currentFilters() });
+    state.listId = id; await loadSegments(); listMsg("Liste « " + name + " » enregistrée");
+  } catch (e) { listMsg("Erreur : " + e.message); }
+}
+async function deleteList() {
+  const current = segments.find((x) => x.id === state.listId);
+  if (!current || !window.confirm("Supprimer la liste « " + current.name + " » ?")) return;
+  try { await rpc("admin_delete_segment", { p_id: current.id }); state.listId = ""; await loadSegments(); listMsg("Liste supprimée"); } catch (e) { listMsg("Erreur : " + e.message); }
+}
+async function loadRows() {
+  let rows;
+  try { rows = await rpc("admin_players", filtersArgs({ p_limit: PAGE, p_offset: state.page * PAGE })); }
+  catch (e) { $("count").textContent = "Erreur : " + e.message; return; }
+  state.total = rows.length ? Number(rows[0].total) : 0;
+  $("rows").replaceChildren(...rows.map((p) => {
+    const name = [p.first_name, p.last_name].filter(Boolean).join(" ");
+    return h("tr", { onclick: () => openPlayer(p.user_id) },
+      h("td", {}, h("b", {}, p.pseudo)),
+      h("td", {}, name || h("span", { class: "dim" }, "—")),
+      h("td", { class: "mono" }, p.email || h("span", { class: "dim" }, "non sécurisé")),
+      h("td", {}, handleLink(p.instagram, "https://www.instagram.com/", "@")),
+      h("td", {}, handleLink(p.tiktok, "https://www.tiktok.com/@", "@")),
+      h("td", {}, p.marketing_optin ? h("span", { class: "pill yes", title: "Consentement donné le " + fmtDateTime(p.marketing_optin_at) }, "oui · " + fmtDate(p.marketing_optin_at)) : h("span", { class: "dim" }, "non")),
+      h("td", {}, p.city || h("span", { class: "dim" }, "—")),
+      h("td", {}, p.medals),
+      h("td", {}, fmtDate(p.created_at)),
+      h("td", {}, fmtDate(p.last_active)),
+      h("td", {}, (p.tags || []).map((t) => h("span", { class: "pill tag" }, t)), p.has_note ? h("span", { class: "dim", title: "Une note existe" }, "✎") : null));
+  }));
+  if (!rows.length) $("rows").replaceChildren(h("tr", {}, h("td", { colspan: 11, class: "dim", style: "padding:24px;text-align:center;cursor:default" }, "Aucun joueur ne correspond.")));
+  const first = state.total ? state.page * PAGE + 1 : 0;
+  $("count").textContent = first + "–" + Math.min((state.page + 1) * PAGE, state.total) + " sur " + state.total + " joueur" + (state.total > 1 ? "s" : "");
+  $("prev").disabled = state.page === 0;
+  $("next").disabled = (state.page + 1) * PAGE >= state.total;
+  refreshExportCount();
+}
+function refilter() { state.page = 0; loadRows(); }
+
+// ---------- fiche d'un joueur ----------
+async function openPlayer(id) {
+  const root = $("drawer-root");
+  const close = () => root.replaceChildren();
+  const back = h("div", { class: "drawer-back", onclick: close });
+  const drawer = h("aside", { class: "drawer" }, h("p", { class: "dim" }, "Chargement…"));
+  root.replaceChildren(back, drawer);
+  let p;
+  try { p = await rpc("admin_player", { p_user: id }); } catch (e) { drawer.replaceChildren(h("p", { class: "msg" }, "Erreur : " + e.message)); return; }
+  if (!p) { drawer.replaceChildren(h("p", { class: "msg" }, "Joueur introuvable.")); return; }
+  const kv = (rows) => h("div", { class: "kv" }, rows.map(([k, v]) => [h("div", { class: "k" }, k), h("div", { class: "vv" }, v === "" || v === null || v === undefined ? "—" : v)]));
+  const name = [p.first_name, p.last_name].filter(Boolean).join(" ");
+  const tags = new Set(p.tags || []);
+  const chipBox = h("div", { class: "tags" });
+  const noteMsg = h("span", { class: "dim", style: "font-size:12px;margin-left:10px" });
+  const saveTags = async () => { try { await rpc("admin_set_tags", { p_user: id, p_tags: [...tags] }); loadTags(); loadRows(); } catch (e) { noteMsg.textContent = "Erreur : " + e.message; } };
+  const drawChips = () => {
+    const input = h("input", { class: "tag-input", list: "tag-list", placeholder: "+ étiquette", maxlength: "30" });
+    const add = () => { const v = input.value.trim().slice(0, 30); if (v && !tags.has(v)) { tags.add(v); drawChips(); saveTags(); } };
+    input.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); add(); } });
+    input.addEventListener("change", add);
+    chipBox.replaceChildren(...[...tags].map((t) => h("span", { class: "chip" }, t, h("button", { title: "Retirer", onclick: () => { tags.delete(t); drawChips(); saveTags(); } }, "×"))), input);
+  };
+  drawChips();
+  const note = h("textarea", { maxlength: "4000", placeholder: "Note libre sur ce joueur (privée)" });
+  note.value = p.note || "";
+  const records = p.records || [];
+  drawer.replaceChildren(
+    h("button", { class: "btn small close", onclick: close }, "Fermer ✕"),
+    h("h2", {}, p.pseudo),
+    h("div", { class: "sub" }, name || "Nom non renseigné"),
+    h("div", { class: "sec" }, h("h3", {}, "CONTACT"), kv([
+      ["E-mail", p.email ? p.email : "non sécurisé (compte anonyme)"],
+      ["Instagram", handleLink(p.instagram, "https://www.instagram.com/", "@")],
+      ["TikTok", handleLink(p.tiktok, "https://www.tiktok.com/@", "@")]])),
+    h("div", { class: "sec" }, h("h3", {}, "CONSENTEMENT"), kv([
+      ["Opt-in", p.marketing_optin ? h("span", { class: "pill yes" }, "oui") : "non"],
+      ["Donné le", p.marketing_optin ? fmtDateTime(p.marketing_optin_at) : "—"],
+      ["Texte accepté", p.marketing_optin ? (p.marketing_optin_version || "—") : "—"]])),
+    h("div", { class: "sec" }, h("h3", {}, "JOUEUR"), kv([
+      ["Inscrit le", fmtDateTime(p.created_at)],
+      ["Dernière connexion", fmtDateTime(p.last_sign_in)],
+      ["Dernière synchro", p.state ? fmtDateTime(p.state.updated_at) : "—"],
+      ["Ville", p.state ? p.state.last_city : "—"],
+      ["Médailles", p.medals],
+      ["Points de style", p.state ? "gagnés " + (p.state.earned ?? 0) + " · dépensés " + (p.state.spent ?? 0) : "—"],
+      ["Voiture", p.car_id],
+      ["Garage", (p.owned_cars || []).join(", ")]])),
+    h("div", { class: "sec" }, h("h3", {}, "RECORDS (" + records.length + ")"), records.length
+      ? h("div", { class: "rec" }, records.map((r) => [h("span", {}, r.circuit + (r.channel === "beta" ? " (beta)" : "")), h("b", {}, (r.distance_dm / 10).toLocaleString("fr-FR") + " m"), h("span", { class: "dim" }, fmtDate(r.at))]))
+      : h("span", { class: "dim" }, "Aucun record")),
+    h("div", { class: "sec" }, h("h3", {}, "ÉTIQUETTES"), chipBox),
+    h("div", { class: "sec" }, h("h3", {}, "NOTE"), note,
+      h("div", { style: "margin-top:8px" }, h("button", { class: "btn cta small", onclick: async () => {
+        try { await rpc("admin_set_note", { p_user: id, p_note: note.value }); noteMsg.textContent = "Note enregistrée"; loadRows(); } catch (e) { noteMsg.textContent = "Erreur : " + e.message; }
+      } }, "Enregistrer la note"), noteMsg)));
+}
+
+// ---------- export CSV ----------
+function csvCell(value) {
+  let s = value === null || value === undefined ? "" : String(value);
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s; // un tableur ne doit pas interpreter une cellule comme une formule
+  return /[",;\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+async function exportCsv() {
+  const button = $("export");
+  button.disabled = true;
+  const label = button.textContent;
+  try {
+    const onlyOptin = $("x-optin").checked;
+    const all = [];
+    for (let offset = 0; ; offset += 1000) {
+      button.textContent = "Export… " + all.length;
+      const rows = await rpc("admin_players", filtersArgs({ p_optin: onlyOptin ? "yes" : state.optin, p_limit: 1000, p_offset: offset }));
+      all.push(...rows);
+      if (rows.length < 1000) break;
+    }
+    const head = ["pseudo", "prenom", "nom", "email", "instagram", "tiktok", "opt_in", "opt_in_date", "ville", "medailles", "inscrit_le", "derniere_activite", "etiquettes"];
+    const lines = [head.join(";")].concat(all.map((p) => [p.pseudo, p.first_name, p.last_name, p.email, p.instagram, p.tiktok, p.marketing_optin ? "oui" : "non",
+      p.marketing_optin_at || "", p.city, p.medals, p.created_at, p.last_active, (p.tags || []).join(" | ")].map(csvCell).join(";")));
+    const blob = new Blob(["﻿" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
+    const link = h("a", { href: URL.createObjectURL(blob), download: "joueurs-local-legend" + (state.cities.length === 1 ? "-" + state.cities[0].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") : "") + "-" + new Date().toISOString().slice(0, 10) + ".csv" });
+    document.body.append(link); link.click(); link.remove();
+  } catch (e) { alert("Export impossible : " + e.message); }
+  finally { button.disabled = false; button.textContent = label; }
+}
+
+
+// ---------- onglet Analyse ----------
+const fmtDur = (s) => { s = Math.round(Number(s) || 0); return s < 60 ? s + " s" : s < 3600 ? Math.floor(s / 60) + " min " + String(s % 60).padStart(2, "0") : Math.floor(s / 3600) + " h " + String(Math.floor(s % 3600 / 60)).padStart(2, "0"); };
+let anDays = 30, anPage = 0, anTotal = 0;
+const AN_PAGE = 25;
+const TABS = { players: "view-players", mail: "view-mail", tickets: "view-tickets", analytics: "view-analytics" };
+function showTab(name) {
+  closePop();
+  for (const [key, view] of Object.entries(TABS)) { $(view).classList.toggle("hidden", key !== name); $("tab-" + key).classList.toggle("on", key === name); }
+  if (name === "players") drawChart();
+  else if (name === "analytics") loadAnalytics();
+  else if (name === "mail") loadCampaigns();
+  else loadTickets();
+}
+function barList(id, items) {
+  const box = $(id);
+  const max = Math.max(1, ...items.map((i) => Number(i.n)));
+  if (!items.length) { box.replaceChildren(h("span", { class: "dim" }, "Pas encore de données")); return; }
+  box.replaceChildren(...items.map((i) => h("div", { class: "row" }, h("span", { class: "name", title: i.name }, i.name), h("span", { class: "track" }, h("span", { class: "fill", style: "display:block;width:" + (100 * Number(i.n) / max) + "%" })), h("b", {}, i.n))));
+}
+async function loadAnalytics() {
+  let a, runs;
+  try { [a, runs] = await Promise.all([rpc("admin_analytics", { p_days: anDays }), rpc("admin_runs_stats", { p_days: anDays })]); }
+  catch (e) { $("an-consent-note").textContent = "Erreur : " + e.message + " — le SQL maj_analytics.sql a-t-il été lancé dans Supabase ?"; return; }
+  const c = a.consent || {};
+  $("an-consent-note").textContent = c.granted + " joueur" + (c.granted > 1 ? "s ont" : " a") + " accepté la mesure, " + c.denied + " ont refusé (leur ville est alors demandée), " + c.unset + " n'ont pas encore répondu. Les chiffres ci-dessous ne concernent que ceux qui ont accepté.";
+  const tile = (value, label, sub) => h("div", { class: "kpi" }, h("div", { class: "v" }, value), h("div", { class: "l" }, label), sub ? h("div", { class: "s" }, sub) : null);
+  $("an-kpis").replaceChildren(
+    tile(a.players_active, "JOUEURS ACTIFS", "sur " + a.players + " joueurs · période : " + a.days + " jours"),
+    tile(a.dau, "ACTIFS · 24 H", "7 jours : " + a.wau + " · 30 jours : " + a.mau),
+    tile(a.sessions, "SESSIONS", a.sessions_per_player + " par joueur"),
+    tile(fmtDur(a.avg_duration), "DURÉE MOYENNE", "médiane : " + fmtDur(a.median_duration)),
+    tile(a.retention.d1 + " %", "RÉTENTION J+1", "J+7 : " + a.retention.d7 + " %"),
+    tile(c.granted, "ACCORDS MESURE", c.denied + " refus · " + c.unset + " sans réponse"));
+  analyticsSeries = (a.by_day || []).map((d) => ({ day: d.day, n: d.sessions }));
+  drawChart();
+  const b = a.duration_buckets || {};
+  barList("an-durations", [{ name: "moins d'1 min", n: b.lt1 }, { name: "1 à 5 min", n: b.m1_5 }, { name: "5 à 15 min", n: b.m5_15 }, { name: "15 à 30 min", n: b.m15_30 }, { name: "plus de 30 min", n: b.gt30 }].map((x) => ({ name: x.name, n: x.n || 0 })));
+  barList("an-sources", a.sources || []);
+  barList("an-devices", a.devices || []);
+  barList("an-systems", a.systems || []);
+  barList("an-browsers", a.browsers || []);
+  barList("an-channels", (a.channels || []).map((x) => ({ name: x.name === "beta" ? "beta" : "officielle", n: x.n })));
+  barList("an-countries", a.countries || []);
+  barList("an-cities", a.cities || []);
+  $("an-circuits").replaceChildren(...(runs.length ? runs.map((r) => h("tr", { style: "cursor:default" }, h("td", {}, r.circuit_id), h("td", {}, r.runs), h("td", {}, r.players), h("td", {}, Number(r.avg_distance_m).toLocaleString("fr-FR") + " m"), h("td", {}, Number(r.best_distance_m).toLocaleString("fr-FR") + " m"), h("td", {}, r.abandoned), h("td", {}, r.gold)))
+    : [h("tr", {}, h("td", { colspan: 7, class: "dim", style: "padding:18px;text-align:center;cursor:default" }, "Aucune partie enregistrée sur la période."))]));
+  await loadSessions();
+  resolveGeo();
+}
+async function loadSessions() {
+  let rows;
+  try { rows = await rpc("admin_sessions", { p_limit: AN_PAGE, p_offset: anPage * AN_PAGE }); } catch (e) { $("an-count").textContent = "Erreur : " + e.message; return; }
+  anTotal = rows.length ? Number(rows[0].total) : 0;
+  const when = (s) => new Date(s).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+  $("an-sessions").replaceChildren(...(rows.length ? rows.map((s) => h("tr", { onclick: () => openSession(s.id) },
+    h("td", {}, when(s.started_at), s.channel === "beta" ? h("span", { class: "pill tag", style: "margin-left:6px" }, "beta") : null),
+    h("td", {}, h("b", {}, s.pseudo)),
+    h("td", {}, fmtDur(s.duration)),
+    h("td", { class: "mono" }, s.ip || h("span", { class: "dim", title: "L'adresse IP est effacée au bout de 5 jours" }, "effacée")),
+    h("td", {}, s.country || h("span", { class: "dim" }, "—")),
+    h("td", {}, s.city || h("span", { class: "dim" }, "—")),
+    h("td", {}, [s.device, s.os, s.browser].filter((x) => x && x !== "?").join(" · ") || "—"),
+    h("td", {}, s.source),
+    h("td", {}, s.events),
+    h("td", {}, s.runs)))
+    : [h("tr", {}, h("td", { colspan: 10, class: "dim", style: "padding:18px;text-align:center;cursor:default" }, "Aucune session pour l'instant."))]));
+  const first = anTotal ? anPage * AN_PAGE + 1 : 0;
+  $("an-count").textContent = first + "–" + Math.min((anPage + 1) * AN_PAGE, anTotal) + " sur " + anTotal + " session" + (anTotal > 1 ? "s" : "");
+  $("an-prev").disabled = anPage === 0;
+  $("an-next").disabled = (anPage + 1) * AN_PAGE >= anTotal;
+}
+// Localise les adresses IP encore inconnues (ipwho.is), puis memorise la ville cote serveur.
+async function resolveGeo() {
+  let pending;
+  try { pending = await rpc("admin_ips_pending", { p_limit: 15 }); } catch (e) { return; }
+  let changed = false;
+  for (const row of pending) {
+    let g = {};
+    try { g = await (await fetch("https://ipwho.is/" + encodeURIComponent(row.ip))).json(); } catch (e) { continue; }
+    try {
+      await rpc("admin_set_geo", { p_ip: row.ip, p_country: g.success ? g.country_code : "", p_region: g.success ? g.region : "", p_city: g.success ? g.city : "", p_lat: g.success ? g.latitude : null, p_lon: g.success ? g.longitude : null, p_isp: g.success && g.connection ? g.connection.isp : "" });
+      changed = true;
+    } catch (e) {}
+  }
+  if (changed) loadSessions();
+}
+
+// ---------- detail d'une session et replay ----------
+async function openSession(id) {
+  const root = $("drawer-root");
+  const close = () => root.replaceChildren();
+  const drawer = h("aside", { class: "drawer" }, h("p", { class: "dim" }, "Chargement…"));
+  root.replaceChildren(h("div", { class: "drawer-back", onclick: close }), drawer);
+  let s;
+  try { s = await rpc("admin_session", { p_id: id }); } catch (e) { drawer.replaceChildren(h("p", { class: "msg" }, "Erreur : " + e.message)); return; }
+  if (!s) { drawer.replaceChildren(h("p", { class: "msg" }, "Session introuvable (effacée ?).")); return; }
+  const kv = (rows) => h("div", { class: "kv" }, rows.map(([k, v]) => [h("div", { class: "k" }, k), h("div", { class: "vv" }, v === "" || v === null || v === undefined ? "—" : v)]));
+  const geo = s.geo || {};
+  const clock = (iso) => new Date(iso).toLocaleTimeString("fr-FR");
+  const events = s.events || [];
+  drawer.replaceChildren(
+    h("button", { class: "btn small close", onclick: close }, "Fermer ✕"),
+    h("h2", {}, s.pseudo), h("div", { class: "sub" }, fmtDateTime(s.started_at) + " · " + fmtDur((new Date(s.last_seen) - new Date(s.started_at)) / 1000)),
+    h("div", { class: "sec" }, h("h3", {}, "CONNEXION"), kv([
+      ["Adresse IP", s.ip || "effacée (gardée 5 jours)"], ["Pays", s.country], ["Région", geo.region], ["Ville (IP)", geo.city], ["Ville indiquée", s.declared_city],
+      ["Fournisseur", geo.isp], ["Fuseau horaire", s.timezone], ["Langue", s.language]])),
+    h("div", { class: "sec" }, h("h3", {}, "APPAREIL"), kv([["Type", s.device], ["Système", s.os], ["Navigateur", s.browser], ["Écran", s.screen], ["Application installée", s.standalone ? "oui" : "non"], ["Version", s.channel === "beta" ? "beta" : "officielle"]])),
+    h("div", { class: "sec" }, h("h3", {}, "PROVENANCE"), kv([["Référent", s.referrer], ["utm_source", s.utm_source], ["utm_medium", s.utm_medium], ["utm_campaign", s.utm_campaign], ["Page d'arrivée", s.landing]])),
+    h("div", { class: "sec" }, h("h3", {}, "PARTIES (" + (s.runs || []).length + ")"), (s.runs || []).length ? (s.runs || []).map((r) => h("div", { style: "display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0;font-size:13px" },
+      h("span", {}, r.circuit + " · " + ((r.summary.distance_dm || 0) / 10).toLocaleString("fr-FR") + " m" + (r.summary.abandoned ? " · abandonnée" : "") + (r.summary.medal ? " · médaille " + r.summary.medal : "")),
+      h("button", { class: "btn small", onclick: () => openReplay(r.id) }, "Rejouer ▶"))) : h("span", { class: "dim" }, "Aucune partie enregistrée (ou effacée après 5 jours, sauf records)")),
+    h("div", { class: "sec" }, h("h3", {}, "CHRONOLOGIE (" + events.length + " événements, effacés après 5 jours)"),
+      h("div", { class: "evt" }, events.slice(0, 400).map((e) => [h("span", { class: "t" }, clock(e.at)), h("span", {}, h("b", {}, e.name), " ", Object.keys(e.props || {}).length ? h("code", {}, JSON.stringify(e.props)) : null)]))));
+}
+
+let circuitsCache = null;
+async function circuitShape(id) {
+  if (circuitsCache === null) { try { circuitsCache = await (await fetch("circuits.json")).json(); } catch (e) { circuitsCache = {}; } }
+  return circuitsCache[id] || [];
+}
+async function openReplay(runId) {
+  const root = $("drawer-root");
+  const close = () => root.replaceChildren();
+  const box = h("aside", { class: "drawer", style: "width:min(760px,100vw)" }, h("p", { class: "dim" }, "Chargement du replay…"));
+  root.replaceChildren(h("div", { class: "drawer-back", onclick: close }), box);
+  let run;
+  try { run = await rpc("admin_run", { p_id: runId }); } catch (e) { box.replaceChildren(h("p", { class: "msg" }, "Erreur : " + e.message)); return; }
+  if (!run) { box.replaceChildren(h("p", { class: "msg" }, "Replay introuvable (effacé : seuls les records sont gardés plus de 5 jours).")); return; }
+  await showReplay(run, box, close);
+}
+// Affiche un replay deja charge (partie d'une session, ou derniere partie jointe a un ticket) dans le panneau `box`.
+async function showReplay(run, box, close) {
+  const samples = (run.data && run.data.s) || [], events = (run.data && run.data.e) || [];
+  if (samples.length < 2) { box.replaceChildren(h("p", { class: "msg" }, "Cette partie ne contient pas de trajectoire.")); return; }
+  const track = await circuitShape(run.circuit);
+  const canvas = h("canvas", { class: "replay", width: 720, height: 520 });
+  const ctx = canvas.getContext("2d");
+  const all = track.concat(samples.map((p) => [p[1], p[2]]));
+  const xs = all.map((p) => p[0]), ys = all.map((p) => p[1]);
+  const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+  const pad = 30, scale = Math.min((720 - 2 * pad) / Math.max(maxX - minX, 1), (520 - 2 * pad) / Math.max(maxY - minY, 1));
+  const px = (x) => pad + (x - minX) * scale + (720 - 2 * pad - (maxX - minX) * scale) / 2;
+  const py = (y) => pad + (y - minY) * scale + (520 - 2 * pad - (maxY - minY) * scale) / 2;
+  const total = samples[samples.length - 1][0];
+  let now = 0, playing = true, rate = 1, last = performance.now(), raf = 0;
+  const label = h("span", { class: "dim" }), log = h("div", { class: "evt", style: "max-height:160px;overflow:auto;margin-top:8px" });
+  const slider = h("input", { type: "range", min: 0, max: total, value: 0, style: "flex:1" });
+  const playBtn = h("button", { class: "btn small" }, "Pause");
+  const rateSel = h("select", { style: "background:var(--plate-dark);border:2px solid var(--edge);border-radius:10px;padding:5px 8px" }, [1, 2, 4].map((r) => h("option", { value: r }, r + "×")));
+  const at = (ms) => { // position interpolee a l'instant ms
+    let i = 1; while (i < samples.length - 1 && samples[i][0] < ms) i++;
+    const a = samples[i - 1], b = samples[i], f = Math.min(Math.max((ms - a[0]) / Math.max(b[0] - a[0], 1), 0), 1);
+    return { x: a[1] + (b[1] - a[1]) * f, y: a[2] + (b[2] - a[2]) * f, rot: (a[3] + (b[3] - a[3]) * f) / 10, speed: a[4] + (b[4] - a[4]) * f, drift: a[5] };
+  };
+  function draw() {
+    ctx.clearRect(0, 0, 720, 520);
+    if (track.length) { ctx.strokeStyle = "rgba(244,241,222,.22)"; ctx.lineWidth = 12; ctx.lineJoin = "round"; ctx.beginPath(); track.forEach((p, i) => i ? ctx.lineTo(px(p[0]), py(p[1])) : ctx.moveTo(px(p[0]), py(p[1]))); ctx.closePath(); ctx.stroke(); }
+    ctx.lineWidth = 2.5; ctx.lineJoin = "round";
+    for (let i = 1; i < samples.length && samples[i][0] <= now + 250; i++) { // trace parcourue ; en cyan, en orange quand la voiture derape
+      ctx.strokeStyle = samples[i][5] ? "#ff9f1c" : "#00f5d4"; ctx.beginPath(); ctx.moveTo(px(samples[i - 1][1]), py(samples[i - 1][2])); ctx.lineTo(px(samples[i][1]), py(samples[i][2])); ctx.stroke();
+    }
+    for (const e of events) if (e[0] <= now && e[1] === "crash") { const k = at(e[0]); ctx.fillStyle = "#ff6b6b"; ctx.beginPath(); ctx.arc(px(k.x), py(k.y), 5, 0, 7); ctx.fill(); }
+    const c = at(now), a = c.rot * Math.PI / 180;
+    ctx.save(); ctx.translate(px(c.x), py(c.y)); ctx.rotate(a); ctx.fillStyle = "#ffd166"; ctx.strokeStyle = "#fff"; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(0, -11); ctx.lineTo(7, 9); ctx.lineTo(-7, 9); ctx.closePath(); ctx.fill(); ctx.stroke(); ctx.restore();
+    label.textContent = (now / 1000).toFixed(1) + " s / " + (total / 1000).toFixed(1) + " s · vitesse " + Math.round(c.speed) + " %" + (c.drift ? " · dérapage" : "");
+    slider.value = now;
+    log.replaceChildren(...events.filter((e) => e[0] <= now).slice(-30).reverse().map((e) => [h("span", { class: "t" }, (e[0] / 1000).toFixed(1) + " s"), h("span", {}, e[1] === "crash" ? "Choc (gravité " + e[2] + " %)" : e[2] + " · +" + e[3] + " pts (×" + e[4] + ")")]).flat());
+  }
+  function frame(nowMs) {
+    if (!box.isConnected) return;
+    if (playing) { now = Math.min(now + (nowMs - last) * rate, total); if (now >= total) { playing = false; playBtn.textContent = "Rejouer"; } }
+    last = nowMs; draw(); raf = requestAnimationFrame(frame);
+  }
+  playBtn.addEventListener("click", () => { if (now >= total) now = 0; playing = !playing; playBtn.textContent = playing ? "Pause" : "Lecture"; });
+  slider.addEventListener("input", () => { now = Number(slider.value); });
+  rateSel.addEventListener("change", () => { rate = Number(rateSel.value); });
+  const s = run.summary || {};
+  box.replaceChildren(
+    h("button", { class: "btn small close", onclick: close }, "Fermer ✕"),
+    h("h2", {}, "Replay · " + run.circuit), h("div", { class: "sub" }, run.pseudo + " · " + fmtDateTime(run.started_at) + " · " + ((s.distance_dm || 0) / 10).toLocaleString("fr-FR") + " m" + (s.abandoned ? " · abandonnée" : "") + (s.medal ? " · médaille " + s.medal : "")),
+    canvas, h("div", { style: "display:flex;gap:10px;align-items:center;margin-top:10px" }, playBtn, slider, rateSel), h("div", { style: "margin-top:6px" }, label), log,
+    track.length ? null : h("p", { class: "note" }, "Le tracé du circuit n'est pas disponible : seule la trajectoire est dessinée."));
+  raf = requestAnimationFrame(frame);
+}
+
+function openReplayData(run) {
+  const root = $("drawer-root");
+  const close = () => root.replaceChildren();
+  const box = h("aside", { class: "drawer", style: "width:min(760px,100vw)" });
+  root.replaceChildren(h("div", { class: "drawer-back", onclick: close }), box);
+  showReplay(run, box, close);
+}
+
+// ---------- onglet Mail ----------
+const MAIL_TEMPLATES = {
+  tournament: { label: "Nouveau tournoi", subject: "Nouveau tournoi sur Local Legend", fields: [
+    ["name", "Nom du tournoi", "text"], ["prize", "Lot à gagner", "text"], ["deadline", "Date limite", "text", "ex. dimanche 30 novembre à 23h59"],
+    ["intro", "Texte d'introduction", "area"], ["image_url", "Image du lot", "image"], ["cta_label", "Texte du bouton", "text", "Participer"], ["cta_url", "Lien du bouton", "text", "https://locallegend.fr"]] },
+  news: { label: "Nouveautés du jeu", subject: "Du nouveau sur Local Legend", fields: [
+    ["version", "Version ou date", "text", "ex. Version 1.4"], ["title", "Titre", "text"], ["image_url", "Image d'illustration", "image"], ["intro", "Introduction", "area"],
+    ["circuits", "Nouveaux circuits (un par ligne)", "area"], ["cars", "Nouvelles voitures (une par ligne)", "area"], ["other", "Autres nouveautés (une par ligne)", "area"],
+    ["cta_label", "Texte du bouton", "text", "Découvrir"], ["cta_url", "Lien du bouton", "text", "https://locallegend.fr"]] },
+  free: { label: "Message libre", subject: "", fields: [
+    ["title", "Titre", "text"], ["body", "Message ({pseudo} = pseudo du joueur)", "area"], ["image_url", "Image (facultatif)", "image"],
+    ["cta_label", "Texte du bouton (facultatif)", "text"], ["cta_url", "Lien du bouton", "text"]] },
+};
+const CAMPAIGN_STATUS = { scheduled: ["Programmé", "gold"], sending: ["En cours", "cyan"], sent: ["Envoyé", "yes"], cancelled: ["Annulé", "grey"] };
+const SEND_STATUS = { queued: ["En attente", "grey"], sending: ["En cours", "cyan"], sent: ["Envoyé", "cyan"], delivered: ["Livré", "yes"], bounced: ["Rebond", "red"], complained: ["Plainte", "red"], failed: ["Échec", "red"], skipped: ["Écarté", "grey"] };
+const pill = (map, key) => { const [label, cls] = map[key] || [key, "grey"]; return h("span", { class: "pill " + cls }, label); };
+const dim = (text) => h("span", { class: "dim" }, text);
+let mailPage = 0, mailTotal = 0;
+const MAIL_PAGE = 30;
+
+// Appel de la fonction d'envoi (Supabase Edge Function "mail") avec la session de l'administrateur.
+async function mailFn(action, body) {
+  let res;
+  try {
+    res = await fetch(SB_URL + "/functions/v1/mail", { method: "POST", headers: { apikey: SB_KEY, "Content-Type": "application/json", Authorization: "Bearer " + await token() }, body: JSON.stringify(Object.assign({ action }, body || {})) });
+  } catch (e) { throw new Error("la fonction « mail » est injoignable"); }
+  if (res.status === 404) throw new Error("la fonction « mail » n'est pas déployée (voir GUIDE-MAIL-FEEDBACK.md)");
+  let data = null;
+  try { data = await res.json(); } catch (e) {}
+  if (!res.ok) throw new Error((data && (data.error || data.message)) || ("http_" + res.status));
+  return data;
+}
+
+async function loadCampaigns() {
+  let rows;
+  try { rows = await rpc("admin_campaigns", { p_limit: MAIL_PAGE, p_offset: mailPage * MAIL_PAGE }); }
+  catch (e) { $("mail-note").textContent = "Erreur : " + e.message + " (le SQL maj_mail_feedback.sql a-t-il été lancé ?)"; return; }
+  $("mail-note").textContent = "";
+  mailTotal = rows.length ? Number(rows[0].total_rows) : 0;
+  const num = (v) => Number(v) || 0;
+  $("mail-rows").replaceChildren(...(rows.length ? rows.map((c) => h("tr", { onclick: () => openCampaign(c.id) },
+    h("td", {}, fmtDateTime(c.scheduled_at || c.created_at)), h("td", {}, h("b", {}, c.subject)), h("td", {}, c.segment_name || "—"),
+    h("td", {}, (MAIL_TEMPLATES[c.template] || {}).label || c.template), h("td", {}, pill(CAMPAIGN_STATUS, c.status)),
+    h("td", {}, num(c.sent) + num(c.delivered) + num(c.bounced) + " / " + num(c.total)), h("td", {}, num(c.delivered)), h("td", {}, num(c.bounced)),
+    h("td", {}, num(c.failed)), h("td", {}, num(c.skipped)))) : [h("tr", {}, h("td", { colspan: 10, class: "dim", style: "padding:24px;text-align:center;cursor:default" }, "Aucun envoi pour l'instant."))]));
+  const first = mailTotal ? mailPage * MAIL_PAGE + 1 : 0;
+  $("mail-count").textContent = first + "–" + Math.min((mailPage + 1) * MAIL_PAGE, mailTotal) + " sur " + mailTotal + " envoi" + (mailTotal > 1 ? "s" : "");
+  $("mail-prev").disabled = mailPage === 0;
+  $("mail-next").disabled = (mailPage + 1) * MAIL_PAGE >= mailTotal;
+}
+
+async function openCampaign(id) {
+  const root = $("drawer-root");
+  const close = () => root.replaceChildren();
+  const drawer = h("aside", { class: "drawer" }, h("p", { class: "dim" }, "Chargement…"));
+  root.replaceChildren(h("div", { class: "drawer-back", onclick: close }), drawer);
+  let data;
+  try { data = await rpc("admin_campaign", { p_id: id }); } catch (e) { drawer.replaceChildren(h("p", { class: "msg" }, "Erreur : " + e.message)); return; }
+  if (!data) { drawer.replaceChildren(h("p", { class: "msg" }, "Envoi introuvable.")); return; }
+  const c = data.campaign, sends = data.sends || [];
+  const count = (...keys) => sends.filter((s) => keys.includes(s.status)).length;
+  const kv = (rows) => h("div", { class: "kv" }, rows.map(([k, v]) => [h("div", { class: "k" }, k), h("div", { class: "vv" }, v === "" || v === null || v === undefined ? "—" : v)]));
+  drawer.replaceChildren(
+    h("button", { class: "btn small close", onclick: close }, "Fermer ✕"),
+    h("h2", {}, c.subject), h("div", { class: "sub" }, (MAIL_TEMPLATES[c.template] || {}).label + " · " + pill(CAMPAIGN_STATUS, c.status).textContent),
+    h("div", { class: "sec" }, h("h3", {}, "ENVOI"), kv([["Liste", c.segment_name], ["Programmé pour", fmtDateTime(c.scheduled_at)], ["Créé par", c.created_by], ["Description (aperçu)", c.preheader],
+      ["Destinataires", c.total + " (écartés : " + c.skipped + ", anti-spam 48 h ou sans consentement)"],
+      ["Livrés", count("delivered")], ["Envoyés, pas encore livrés", count("sent", "sending")], ["En attente", count("queued")], ["Rebonds / plaintes", count("bounced", "complained")], ["Échecs", count("failed")]])),
+    c.status === "scheduled" ? h("button", { class: "btn danger", onclick: async () => {
+      if (!window.confirm("Annuler cet envoi programmé ?")) return;
+      try { await rpc("admin_cancel_campaign", { p_id: id }); close(); loadCampaigns(); } catch (e) { alert("Erreur : " + e.message); }
+    } }, "Annuler l'envoi programmé") : null,
+    h("div", { class: "sec" }, h("h3", {}, "DESTINATAIRES (" + sends.length + ")"),
+      sends.length ? h("div", { class: "tablewrap", style: "border:0" }, h("table", { style: "min-width:0" }, h("tbody", {}, sends.map((s) => h("tr", { style: "cursor:default" },
+        h("td", {}, h("b", {}, s.pseudo || "—")), h("td", { class: "mono" }, s.email || "—"), h("td", {}, pill(SEND_STATUS, s.status)),
+        h("td", { class: "dim" }, s.error || (s.delivered_at ? fmtDateTime(s.delivered_at) : s.sent_at ? fmtDateTime(s.sent_at) : ""))))))) : dim("Aucun destinataire pour l'instant.")));
+}
+
+// Redimensionne l'image (1000 px au plus, JPEG) puis la depose dans le stockage public "mail-images".
+async function uploadMailImage(file) {
+  const bmp = await createImageBitmap(file);
+  const k = Math.min(1, 1000 / Math.max(bmp.width, bmp.height));
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(bmp.width * k)); canvas.height = Math.max(1, Math.round(bmp.height * k));
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#1a1033"; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.drawImage(bmp, 0, 0, canvas.width, canvas.height);
+  const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.85));
+  const name = crypto.randomUUID() + ".jpg";
+  const res = await fetch(SB_URL + "/storage/v1/object/mail-images/" + name, { method: "POST", headers: { apikey: SB_KEY, Authorization: "Bearer " + await token(), "Content-Type": "image/jpeg", "x-upsert": "false" }, body: blob });
+  if (!res.ok) throw new Error(res.status === 404 || res.status === 400 ? "stockage « mail-images » absent (le SQL a-t-il été lancé ?)" : "envoi de l'image refusé (" + res.status + ")");
+  return SB_URL + "/storage/v1/object/public/mail-images/" + name;
+}
+
+function openComposer() {
+  const m = { template: "tournament", vars: {}, subject: "", preheader: "", source: "list:" + (state.listId || ""), when: "now", at: "" };
+  const box = $("mail-compose");
+  $("mail-list").classList.add("hidden"); box.classList.remove("hidden");
+  const msg = h("div", { class: "msgbox hidden" });
+  const say = (text, ok) => { msg.className = "msgbox " + (ok ? "ok" : "err"); msg.textContent = text; };
+  const preview = h("iframe", { title: "Aperçu de l'e-mail", sandbox: "" });
+  const audience = h("div", { class: "box" }, "Calcul du nombre de destinataires…");
+  const subjectInput = h("input", { type: "text", maxlength: 150, placeholder: "Objet de l'e-mail", oninput: (e) => { m.subject = e.target.value; schedulePreview(); } });
+  const preInput = h("input", { type: "text", maxlength: 200, placeholder: "Courte phrase visible dans la boîte de réception, sous l'objet", oninput: (e) => { m.preheader = e.target.value; schedulePreview(); } });
+  const fieldsBox = h("div", {});
+  const templateSelect = h("select", { onchange: (e) => { m.template = e.target.value; m.vars = {}; buildFields(); schedulePreview(); } }, Object.entries(MAIL_TEMPLATES).map(([k, t]) => h("option", { value: k }, t.label)));
+  const sourceSelect = h("select", { onchange: (e) => { m.source = e.target.value; refreshAudience(); } });
+  const whenSelect = h("select", { onchange: (e) => { m.when = e.target.value; atInput.classList.toggle("hidden", m.when !== "later"); } }, h("option", { value: "now" }, "Envoyer tout de suite"), h("option", { value: "later" }, "Programmer"));
+  const atInput = h("input", { type: "datetime-local", class: "hidden", style: "margin-top:6px", oninput: (e) => { m.at = e.target.value; } });
+  const sourceFilters = () => m.source === "free" ? { segment: null, filters: currentFilters() } : { segment: m.source.slice(5) || null, filters: (segments.find((x) => x.id === m.source.slice(5)) || {}).filters || {} };
+  async function refreshAudience() {
+    const src = sourceFilters();
+    try {
+      const a = await rpc("admin_segment_preview", { p_filters: src.filters });
+      audience.className = "box" + (a.eligible === 0 ? " warn" : "");
+      audience.replaceChildren(h("b", {}, a.eligible + " destinataire" + (a.eligible > 1 ? "s" : "")), " recevront l'e-mail. ",
+        dim(a.total + " joueur" + (a.total > 1 ? "s" : "") + " dans la liste · " + a.optin + " avec consentement et e-mail · " + a.throttled + " écarté" + (a.throttled > 1 ? "s" : "") + " (déjà contactés depuis moins de 48 h)."));
+      m.eligible = a.eligible;
+    } catch (e) { audience.className = "box warn"; audience.textContent = "Calcul impossible : " + e.message; m.eligible = 0; }
+  }
+  function buildSources() {
+    sourceSelect.replaceChildren(...segments.map((x) => h("option", { value: "list:" + x.id }, x.name + " (" + x.members + ")")), h("option", { value: "list:" }, "Tous les joueurs"), h("option", { value: "free" }, "Filtres actuels de l'onglet Joueurs"));
+    if (![...sourceSelect.options].some((o) => o.value === m.source)) m.source = "list:";
+    sourceSelect.value = m.source;
+  }
+  function buildFields() {
+    fieldsBox.replaceChildren(...MAIL_TEMPLATES[m.template].fields.map(([key, label, kind, hint]) => {
+      let input;
+      if (kind === "area") input = h("textarea", { rows: key === "intro" || key === "body" ? 4 : 3, oninput: (e) => { m.vars[key] = e.target.value; schedulePreview(); } });
+      else if (kind === "image") {
+        const status = h("small", {}, "Image JPEG, PNG ou WebP (redimensionnée à 1000 px).");
+        const thumb = h("img", { class: "shot hidden", style: "max-width:160px;cursor:default;margin-top:6px" });
+        const pick = h("input", { type: "file", accept: "image/jpeg,image/png,image/webp", onchange: async (e) => {
+          const file = e.target.files[0]; if (!file) return;
+          status.textContent = "Envoi de l'image…";
+          try { const url = await uploadMailImage(file); m.vars[key] = url; thumb.src = url; thumb.classList.remove("hidden"); status.textContent = "Image ajoutée."; schedulePreview(); }
+          catch (err) { status.textContent = "Erreur : " + err.message; }
+        } });
+        const clear = h("button", { class: "btn small", style: "margin-top:6px", onclick: (e) => { e.preventDefault(); delete m.vars[key]; thumb.classList.add("hidden"); pick.value = ""; status.textContent = "Image retirée."; schedulePreview(); } }, "Retirer l'image");
+        return h("div", { class: "field" }, h("span", {}, label), pick, thumb, h("div", {}, clear), status);
+      } else input = h("input", { type: "text", placeholder: hint || "", oninput: (e) => { m.vars[key] = e.target.value; schedulePreview(); } });
+      return h("div", { class: "field" }, h("span", {}, label), input);
+    }));
+    subjectInput.placeholder = MAIL_TEMPLATES[m.template].subject || "Objet de l'e-mail";
+  }
+  let timer = null, seq = 0;
+  function schedulePreview() { clearTimeout(timer); timer = setTimeout(runPreview, 450); }
+  async function runPreview() {
+    const mine = ++seq;
+    try {
+      const out = await mailFn("preview", { template: m.template, vars: m.vars, subject: m.subject, preheader: m.preheader });
+      if (mine === seq) preview.srcdoc = out.html;
+    } catch (e) { if (mine === seq) preview.srcdoc = "<body style='font:14px sans-serif;padding:20px;color:#444'>Aperçu indisponible : " + String(e.message).replace(/[<>&]/g, "") + "</body>"; }
+  }
+  const effectiveSubject = () => m.subject.trim() || MAIL_TEMPLATES[m.template].subject || (m.vars.title || "").trim();
+  const testBtn = h("button", { class: "btn", onclick: async () => {
+    testBtn.disabled = true;
+    try { const out = await mailFn("test", { template: m.template, vars: m.vars, subject: effectiveSubject(), preheader: m.preheader }); say("E-mail de test envoyé à " + out.to + ".", true); }
+    catch (e) { say("Test impossible : " + e.message, false); } finally { testBtn.disabled = false; }
+  } }, "M'envoyer un test");
+  const sendBtn = h("button", { class: "btn cta", onclick: async () => {
+    const subject = effectiveSubject();
+    if (!subject) { say("Renseigne l'objet de l'e-mail.", false); return; }
+    if (m.when === "later" && !m.at) { say("Choisis la date et l'heure d'envoi.", false); return; }
+    if (m.when === "later" && new Date(m.at) < new Date()) { say("La date d'envoi est dans le passé.", false); return; }
+    await refreshAudience();
+    if (!m.eligible) { say("Aucun destinataire : l'envoi n'a pas été créé.", false); return; }
+    const src = sourceFilters();
+    const when = m.when === "later" ? "le " + fmtDateTime(new Date(m.at).toISOString()) : "maintenant";
+    if (!window.confirm("Envoyer « " + subject + " » à " + m.eligible + " joueur" + (m.eligible > 1 ? "s" : "") + " (" + (src.segment ? (segments.find((x) => x.id === src.segment) || {}).name : m.source === "free" ? "filtres actuels" : "tous les joueurs") + "), " + when + " ?\n\nCette action est définitive.")) return;
+    sendBtn.disabled = true;
+    try {
+      await rpc("admin_create_campaign", { p_subject: subject, p_preheader: m.preheader, p_template: m.template, p_vars: m.vars, p_segment: src.segment, p_filters: src.filters, p_scheduled_at: m.when === "later" ? new Date(m.at).toISOString() : null });
+      if (m.when === "now") { try { await mailFn("process"); } catch (e) { /* la tache planifiee prendra le relais */ } }
+      closeComposer(); loadCampaigns();
+    } catch (e) { say("Envoi impossible : " + e.message, false); sendBtn.disabled = false; }
+  } }, "Envoyer");
+  const closeComposer = () => { clearTimeout(timer); box.classList.add("hidden"); box.replaceChildren(); $("mail-list").classList.remove("hidden"); };
+  box.replaceChildren(
+    h("div", { class: "toolbar" }, h("button", { class: "btn", onclick: closeComposer }, "← Retour aux envois"), h("h2", { style: "margin:0;font-size:16px" }, "Nouvel envoi")),
+    h("div", { class: "composer" },
+      h("div", {},
+        h("div", { class: "field" }, h("span", {}, "Liste de destinataires"), sourceSelect, h("small", {}, "Les listes se créent dans l'onglet Joueurs (filtres, puis « Enregistrer comme liste »).")), audience,
+        h("div", { class: "field" }, h("span", {}, "Modèle"), templateSelect),
+        h("div", { class: "field" }, h("span", {}, "Objet"), subjectInput),
+        h("div", { class: "field" }, h("span", {}, "Description (aperçu dans la boîte de réception)"), preInput),
+        fieldsBox,
+        h("div", { class: "field" }, h("span", {}, "Quand"), whenSelect, atInput),
+        msg, h("div", { class: "toolbar" }, testBtn, sendBtn),
+        h("p", { class: "note" }, "Un joueur ne reçoit pas plus d'un envoi de campagne par 48 h. Seuls les joueurs avec consentement et compte sécurisé (e-mail) sont concernés. Chaque mail contient un lien de désinscription.")),
+      preview));
+  templateSelect.value = m.template; buildSources(); buildFields(); refreshAudience(); runPreview();
+}
+
+// ---------- onglet Tickets (retours des joueurs) ----------
+const TICKET_STATUS = { new: ["Nouveau", "red"], in_progress: ["En cours", "gold"], resolved: ["Résolu", "yes"], rejected: ["Rejeté", "grey"] };
+let tPage = 0, tTotal = 0, tTimer = null;
+const T_PAGE = 50;
+async function refreshTicketBadge() {
+  try {
+    const n = Number(await rpc("admin_tickets_new_count"));
+    $("tickets-badge").textContent = n; $("tickets-badge").classList.toggle("hidden", !n);
+  } catch (e) { $("tickets-badge").classList.add("hidden"); }
+}
+async function loadTickets() {
+  let rows;
+  try { rows = await rpc("admin_tickets", { p_status: $("t-status").value, p_kind: $("t-kind").value, p_search: $("t-search").value.trim(), p_limit: T_PAGE, p_offset: tPage * T_PAGE }); }
+  catch (e) { $("t-count").textContent = "Erreur : " + e.message + " (le SQL maj_mail_feedback.sql a-t-il été lancé ?)"; return; }
+  tTotal = rows.length ? Number(rows[0].total) : 0;
+  $("t-rows").replaceChildren(...(rows.length ? rows.map((t) => h("tr", { onclick: () => openTicket(t.id) },
+    h("td", {}, fmtDateTime(t.created_at)), h("td", {}, h("span", { class: "pill " + (t.kind === "bug" ? "red" : "cyan") }, t.kind === "bug" ? "Bug" : "Suggestion")),
+    h("td", {}, pill(TICKET_STATUS, t.status)), h("td", {}, h("b", {}, t.pseudo), h("div", { class: "dim mono", style: "font-size:11px" }, t.email || "non sécurisé")),
+    h("td", {}, t.city || dim("—")), h("td", { style: "max-width:380px;white-space:normal" }, t.message.length > 140 ? t.message.slice(0, 140) + "…" : t.message),
+    h("td", {}, [t.has_screenshot ? "capture " : "", t.has_replay ? "replay " : "", t.has_session ? "session" : ""].join("").trim() || dim("—")), h("td", {}, Number(t.replies) || dim("0")))) :
+    [h("tr", {}, h("td", { colspan: 8, class: "dim", style: "padding:24px;text-align:center;cursor:default" }, "Aucun ticket."))]));
+  const first = tTotal ? tPage * T_PAGE + 1 : 0;
+  $("t-count").textContent = first + "–" + Math.min((tPage + 1) * T_PAGE, tTotal) + " sur " + tTotal + " ticket" + (tTotal > 1 ? "s" : "");
+  $("t-prev").disabled = tPage === 0; $("t-next").disabled = (tPage + 1) * T_PAGE >= tTotal;
+  refreshTicketBadge();
+}
+
+async function openTicket(id) {
+  const root = $("drawer-root");
+  const close = () => { root.replaceChildren(); loadTickets(); };
+  const drawer = h("aside", { class: "drawer", style: "width:min(620px,100vw)" }, h("p", { class: "dim" }, "Chargement…"));
+  root.replaceChildren(h("div", { class: "drawer-back", onclick: close }), drawer);
+  let t;
+  try { t = await rpc("admin_ticket", { p_id: id }); } catch (e) { drawer.replaceChildren(h("p", { class: "msg" }, "Erreur : " + e.message)); return; }
+  if (!t) { drawer.replaceChildren(h("p", { class: "msg" }, "Ticket introuvable.")); return; }
+  const p = t.player || {}, ctx = t.context || {};
+  const kv = (rows) => h("div", { class: "kv" }, rows.map(([k, v]) => [h("div", { class: "k" }, k), h("div", { class: "vv" }, v === "" || v === null || v === undefined ? "—" : String(v))]));
+  const msg = h("div", { class: "msgbox hidden" });
+  const say = (text, ok) => { msg.className = "msgbox " + (ok ? "ok" : "err"); msg.textContent = text; };
+  const status = h("select", {}, Object.entries(TICKET_STATUS).map(([k, [label]]) => h("option", { value: k, selected: k === t.status }, label)));
+  const note = h("textarea", { rows: 3, maxlength: 4000, placeholder: "Note interne (jamais envoyée au joueur)" }, t.admin_note || "");
+  const canNotify = p.secured && !t.resolved_mail_sent;
+  const notify = h("input", { type: "checkbox" });
+  const save = h("button", { class: "btn cta", onclick: async () => {
+    save.disabled = true;
+    try {
+      const out = await rpc("admin_set_ticket", { p_id: id, p_status: status.value, p_note: note.value, p_notify: canNotify && notify.checked && status.value === "resolved" });
+      if (out && out.mailed) { try { await mailFn("process"); } catch (e) { /* la tache planifiee prendra le relais */ } }
+      say(out && out.mailed ? "Enregistré, e-mail « c'est corrigé » envoyé." : "Enregistré.", true); refreshTicketBadge();
+    } catch (e) { say("Erreur : " + e.message, false); } finally { save.disabled = false; }
+  } }, "Enregistrer");
+  const subject = h("input", { type: "text", maxlength: 150, value: "Ta remarque sur Local Legend" });
+  const body = h("textarea", { rows: 5, maxlength: 5000, placeholder: "Ta réponse (le mail reprendra le message du joueur en citation)" });
+  const repliesBox = h("div", {}, (t.replies || []).map((r) => h("div", { class: "box" }, h("div", { class: "dim", style: "font-size:11px;margin-bottom:4px" }, fmtDateTime(r.at) + " · " + r.author), h("b", {}, r.subject), h("div", { style: "white-space:pre-wrap;margin-top:4px" }, r.body))));
+  const reply = h("button", { class: "btn", onclick: async () => {
+    if (!body.value.trim()) { say("Écris ta réponse.", false); return; }
+    if (!window.confirm("Envoyer cette réponse par e-mail à " + p.pseudo + " ?")) return;
+    reply.disabled = true;
+    try {
+      await rpc("admin_reply_ticket", { p_id: id, p_subject: subject.value, p_body: body.value });
+      try { await mailFn("process"); } catch (e) { /* la tache planifiee prendra le relais */ }
+      repliesBox.append(h("div", { class: "box" }, h("div", { class: "dim", style: "font-size:11px;margin-bottom:4px" }, "À l'instant"), h("b", {}, subject.value), h("div", { style: "white-space:pre-wrap;margin-top:4px" }, body.value)));
+      body.value = ""; say("Réponse envoyée.", true);
+    } catch (e) { say(e.message === "no_email" ? "Ce joueur n'a pas sécurisé son compte : pas d'adresse e-mail." : "Erreur : " + e.message, false); } finally { reply.disabled = false; }
+  } }, "Envoyer la réponse");
+  let shot = null;
+  if (typeof t.screenshot === "string" && /^[A-Za-z0-9+/=]+$/.test(t.screenshot)) {
+    const src = "data:image/jpeg;base64," + t.screenshot;
+    shot = h("img", { class: "shot", src, onclick: () => {
+      const lightbox = h("div", { style: "position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:50;display:flex;align-items:center;justify-content:center;cursor:zoom-out", onclick: () => lightbox.remove() }, h("img", { src, style: "max-width:96vw;max-height:96vh;border-radius:12px" }));
+      document.body.append(lightbox);
+    } });
+  }
+  drawer.replaceChildren(
+    h("button", { class: "btn small close", onclick: close }, "Fermer ✕"),
+    h("h2", {}, (t.kind === "bug" ? "Bug" : "Suggestion") + " · " + p.pseudo), h("div", { class: "sub" }, fmtDateTime(t.created_at)),
+    h("div", { class: "sec" }, h("h3", {}, "MESSAGE"), h("div", { class: "box", style: "white-space:pre-wrap" }, t.message)),
+    h("div", { class: "sec" }, h("h3", {}, "JOUEUR"), kv([["Pseudo", p.pseudo], ["E-mail", p.secured ? p.email : "compte non sécurisé"], ["Ville", p.city], ["Voiture", p.car_id], ["Médailles", p.medals],
+      ["Inscrit le", p.created_at ? fmtDate(p.created_at) : ""], ["Consentement mail", p.optin ? "oui" : "non"]]),
+      h("button", { class: "btn small", style: "margin-top:8px", onclick: () => openPlayer(p.user_id) }, "Ouvrir la fiche du joueur")),
+    h("div", { class: "sec" }, h("h3", {}, "CONTEXTE"), kv(Object.entries(ctx).filter(([, v]) => typeof v !== "object").map(([k, v]) => [k, v]))),
+    shot ? h("div", { class: "sec" }, h("h3", {}, "CAPTURE D'ÉCRAN"), shot) : null,
+    t.replay ? h("div", { class: "sec" }, h("h3", {}, "DERNIÈRE PARTIE"), h("button", { class: "btn", onclick: () => openReplayData(Object.assign({ pseudo: p.pseudo, started_at: t.created_at, summary: {} }, t.replay)) }, "Rejouer la partie ▶")) : null,
+    t.session_id ? h("div", { class: "sec" }, h("h3", {}, "SESSION"), h("button", { class: "btn", onclick: () => openSession(t.session_id) }, "Voir la session du joueur")) : null,
+    h("div", { class: "sec" }, h("h3", {}, "SUIVI"), h("div", { class: "field" }, h("span", {}, "Statut"), status), h("div", { class: "field" }, h("span", {}, "Note interne"), note),
+      canNotify ? h("label", { style: "display:flex;gap:8px;align-items:center;font-size:13px;margin-bottom:10px" }, notify, "Prévenir le joueur par e-mail quand le statut passe à « Résolu » (une seule fois)") : (t.resolved_mail_sent ? h("p", { class: "note" }, "Le joueur a déjà été prévenu que c'est corrigé.") : null),
+      save),
+    h("div", { class: "sec" }, h("h3", {}, "RÉPONDRE PAR E-MAIL"), p.secured ? [repliesBox, h("div", { class: "field" }, h("span", {}, "Objet"), subject), h("div", { class: "field" }, h("span", {}, "Message"), body), reply] : h("p", { class: "note" }, "Ce joueur n'a pas sécurisé son compte : impossible de lui répondre par e-mail.")),
+    msg);
+}
+
+// ---------- branchements ----------
+$("login-go").addEventListener("click", loginGo);
+$("login-back").addEventListener("click", (e) => { e.preventDefault(); loginStep("email"); });
+for (const id of ["login-email", "login-code"]) $(id).addEventListener("keydown", (e) => { if (e.key === "Enter") loginGo(); });
+$("logout").addEventListener("click", logout);
+$("f-search").addEventListener("input", (e) => { clearTimeout(searchTimer); searchTimer = setTimeout(() => { state.search = e.target.value.trim(); refilter(); }, 300); });
+for (const [id, key] of [["f-optin", "optin"], ["f-secured", "secured"], ["f-tag", "tag"], ["f-order", "order"]]) $(id).addEventListener("change", (e) => { state[key] = e.target.value; refilter(); });
+$("f-city-btn").addEventListener("click", openCityPop);
+document.addEventListener("click", closePop);
+$("f-more").addEventListener("click", () => { const hidden = $("f-adv").classList.toggle("hidden"); $("f-more").textContent = hidden ? "Plus de filtres ▾" : "Moins de filtres ▴"; });
+for (const id of ["a-active", "a-medals-min", "a-medals-max", "a-car", "a-after", "a-before", "a-device", "a-legend", "a-insta", "a-tiktok"]) $(id).addEventListener("change", () => { readAdvanced(); refilter(); });
+$("f-list").addEventListener("change", (e) => {
+  state.listId = e.target.value;
+  const chosen = segments.find((x) => x.id === state.listId);
+  if (chosen) applyFilters(chosen.filters || {}); else if (!state.listId) listMsg("");
+  renderSegmentSelect(); refilter();
+});
+$("list-save").addEventListener("click", () => saveList(true));
+$("list-update").addEventListener("click", () => saveList(false));
+$("list-delete").addEventListener("click", deleteList);
+$("mail-new").addEventListener("click", openComposer);
+$("mail-prev").addEventListener("click", () => { mailPage = Math.max(0, mailPage - 1); loadCampaigns(); });
+$("mail-next").addEventListener("click", () => { mailPage += 1; loadCampaigns(); });
+$("t-search").addEventListener("input", () => { clearTimeout(tTimer); tTimer = setTimeout(() => { tPage = 0; loadTickets(); }, 300); });
+for (const id of ["t-status", "t-kind"]) $(id).addEventListener("change", () => { tPage = 0; loadTickets(); });
+$("t-prev").addEventListener("click", () => { tPage = Math.max(0, tPage - 1); loadTickets(); });
+$("t-next").addEventListener("click", () => { tPage += 1; loadTickets(); });
+$("prev").addEventListener("click", () => { state.page = Math.max(0, state.page - 1); loadRows(); });
+$("next").addEventListener("click", () => { state.page += 1; loadRows(); });
+$("export").addEventListener("click", exportCsv);
+$("x-optin").addEventListener("change", refreshExportCount);
+$("tab-players").addEventListener("click", () => showTab("players"));
+$("tab-mail").addEventListener("click", () => showTab("mail"));
+$("tab-tickets").addEventListener("click", () => showTab("tickets"));
+$("tab-analytics").addEventListener("click", () => showTab("analytics"));
+for (const b of document.querySelectorAll(".periods button")) b.addEventListener("click", () => {
+  anDays = Number(b.dataset.days); anPage = 0;
+  document.querySelectorAll(".periods button").forEach((x) => x.classList.toggle("on", x === b));
+  loadAnalytics();
+});
+$("an-prev").addEventListener("click", () => { anPage = Math.max(0, anPage - 1); loadSessions(); });
+$("an-next").addEventListener("click", () => { anPage += 1; loadSessions(); });
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") $("drawer-root").replaceChildren(); });
+start();
+</script>
+</body>
+</html>
